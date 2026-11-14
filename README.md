@@ -63,7 +63,7 @@ Female body replacers for retail races and the Sylvari female body, as client ar
 | `...AetheriaSylvariFemaleShape.MPQ` | Sylvari female body shape (Rwise's shape transferred onto the custom model) |
 | `...AetheriaSylvariFemaleBoots.MPQ` | Sylvari female v5: Draenei-style boots and shin guards, a five-bone cape chain and the nine retail cloak shapes |
 
-Put them in the client `Data` folder. The names sort by length, so later names override earlier ones; keep the names as they are. Remove an archive to go back. They contain no game files of Blizzard's own beyond what the models reference by ID. `MANIFEST.sha256` lists every file hash.
+Put them in the client `Data` folder. The names sort by length, so later names override earlier ones; keep the names as they are. Remove an archive to go back. They contain no game files of Blizzard's own beyond what the models reference by ID. `MANIFEST.sha256` lists every file hash (text files are hashed in their committed LF form; check a fresh clone with `core.autocrlf=false`).
 
 ## Requirements and limits
 
