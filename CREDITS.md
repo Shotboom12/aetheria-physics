@@ -1,6 +1,7 @@
 # Credits
 
 - **Rwise**: the "Idealistic Physics" female body models in `models/` and the physics setup they carry (the jiggle in `JigglePhysics.h` is modelled on its parameters). Rwise gave the repository owner permission to use and redistribute the models, with credit, and asked that no one else redistribute them. Please do not re-share them.
+- **Ilusixn** (author of Custom-Race-3.3.5a): the Hozen (race 112) and Sylvari (race 110) races and their files, which the Aetheria owner received from him and uses with his permission. The Sylvari model archives in `models/` build on his Sylvari race; the female body in them is Rwise's.
 - **Kalibros (GitHub: STRHercules)**: the frameworks and help this builds on, the wowdecomp / Esteria client and the `wotlkconv` model tools used by the reference scripts.
 - **Medviten**: help and the WHE module.
 - **Saty**: x64 decompilation work.

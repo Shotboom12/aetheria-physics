@@ -74,4 +74,4 @@ Put them in the client `Data` folder. The names sort by length, so later names o
 
 ## Credits
 
-See `CREDITS.md`. Rwise (models and the physics reference the jiggle is modelled on), Kalibros / STRHercules (frameworks and help), Medviten, Saty (x64 decompilation work).
+See `CREDITS.md`. Ilusixn (the Hozen and Sylvari races), Rwise (models and the physics reference the jiggle is modelled on), Kalibros / STRHercules (frameworks and help), Medviten, Saty (x64 decompilation work).
