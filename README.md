@@ -1,6 +1,6 @@
 # Aetheria Physics
 
-Optional physics for Wrath 3.3.5a clients built on the Esteria / wowdecomp engine (the Aetheria client): **spring cloaks** on retail-skeleton characters, **soft-tissue jiggle** on the retail female bodies, and an **optional add-on of the new female body models** these were made for.
+Optional physics for Wrath 3.3.5a clients built on the Esteria / wowdecomp engine (the Aetheria client): **spring cloaks** on retail-skeleton characters, **soft-tissue jiggle** on the retail female bodies and the Sylvari female, **hair physics** for retail long hair, ponytails and beards, and an **optional add-on of the new female body models** these were made for.
 
 Status words used here: **installed** = applied in the owner's test client; **accepted** = the owner tested it in game and approved it. Compiling is not acceptance.
 
@@ -10,6 +10,8 @@ Status words used here: **installed** = applied in the owner's test client; **ac
 | --- | --- | --- |
 | `client/Engine/Source/Retail/CapePhysics.h` | Cloak springs: a damped spring on each of the five cape bones (key bones 36-40), wind while running, rest flare for models whose cape chain is appended | accepted on Draenei, Night Elf and Sylvari female |
 | `client/Engine/Source/Retail/JigglePhysics.h` | Breast bone springs and a rear spring that drives the rear mesh value | accepted on Human, Blood Elf, Night Elf, Draenei, Void Elf |
+| `client/Engine/Source/Retail/HairPhysics.h` | Hair springs: chains of loose hair bones hanging from the head swing on turns and stops; front-hanging chains (beards) are limited so they do not clip the chest | accepted on Blood Elf female and Orc male |
+| `patches/client-hair-physics-1.patch`, `-2.patch`, `client-sylvari-jiggle-profile.patch` | Apply in this order after the cloak patch: hair hooks, the hair retune and beard limit, and the Sylvari female body profile for the jiggle sliders | applied, built and accepted |
 | `patches/client-cape-physics.patch` | The hooks for the cloak physics (state map in `BodyShape.h`, one call in `Unit_C.cpp`, options page, Lua commands), against the aetheria-client source as it stood on 2026-11-13 (jiggle hooks included) | applied, built and accepted |
 | `models/` | Optional add-on: the female body replacers and the Sylvari female body, cape chain and retail cloaks (see below) | accepted |
 | `tools/sylvari-model/` | Reference scripts that built the Sylvari female archive (shape transfer, cape chain, cloak shells). They use placeholder paths (`<WORK_DIR>` and so on) and need Kalibros' `wotlkconv` and StormLib; they are for reading, not one-click use | reference |
@@ -47,8 +49,10 @@ Interface > Aetheria Physics (saved in `Config.wtf`):
 | `jiggleStrength` | 2 | 1 Subtle, 2 Natural, 3 Strong, 4 Exaggerated |
 | `capePhysics` | 1 (on) | Cloak springs |
 | `capeStrength` | 2 | Same four steps for cloaks |
+| `hairPhysics` | 1 (on) | Hair springs |
+| `hairStrength` | 2 | Same four steps for hair |
 
-Live tuning from chat: `/run CapeSet("gain", 2.5)`, `/run JiggleSet("breastGain", 1.4)`; `CapeStatus()` and `JiggleStatus()` report what the client found on your model. Names are listed in `docs/HOW-IT-WORKS.md`.
+Live tuning from chat: `/run CapeSet("gain", 2.5)`, `/run JiggleSet("breastGain", 1.4)`; `CapeStatus()`, `JiggleStatus()` and `HairStatus()` report; `HairSet(name, value)` tunes the hair (names at the top of `HairPhysics.h`); what the client found on your model. Names are listed in `docs/HOW-IT-WORKS.md`.
 
 ## The add-on models (`models/`)
 
@@ -61,7 +65,7 @@ Female body replacers for retail races and the Sylvari female body, as client ar
 | `...AetheriaRetailReplacerDracthyrTest.MPQ` | Dracthyr visage female |
 | `...AetheriaRetailReplacerSkyborneTest.MPQ` | Skyborne female |
 | `...AetheriaSylvariFemaleShape.MPQ` | Sylvari female body shape (Rwise's shape transferred onto the custom model) |
-| `...AetheriaSylvariFemaleBoots.MPQ` | Sylvari female v5: Draenei-style boots and shin guards, a five-bone cape chain and the nine retail cloak shapes |
+| `...AetheriaSylvariFemaleBoots.MPQ` | Sylvari female v6b: breast bones for the jiggle, Draenei-style boots and shin guards, a five-bone cape chain and the nine retail cloak shapes |
 
 Put them in the client `Data` folder. The names sort by length, so later names override earlier ones; keep the names as they are. Remove an archive to go back. They contain no game files of Blizzard's own beyond what the models reference by ID. `MANIFEST.sha256` lists every file hash (text files are hashed in their committed LF form; check a fresh clone with `core.autocrlf=false`).
 
@@ -70,7 +74,7 @@ Put them in the client `Data` folder. The names sort by length, so later names o
 - The Aetheria client (or another wowdecomp-based client with the same bone API) built from source; nothing here is a drop-in for a stock 3.3.5a client.
 - The physics works on models with the retail cape chain (almost every retail race and sex). Models without it (Hozen, Harronir) are left alone.
 - Jiggle needs the retail female body profile; it is off by default.
-- Not yet done: jiggle sliders for the Sylvari, a Sylvari male, hair physics.
+- Not yet done: a Sylvari male, hair physics for Hozen and Sylvari hair.
 
 ## Credits
 

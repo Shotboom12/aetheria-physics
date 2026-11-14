@@ -1,0 +1,67 @@
+diff --git a/v2/orig/BodyShapeScripts.h b/v2/new/BodyShapeScripts.h
+index 9b69aa6..bbe2ca0 100644
+--- a/v2/orig/BodyShapeScripts.h
++++ b/v2/new/BodyShapeScripts.h
+@@ -225,7 +225,7 @@ static int32_t Script_HairSet(lua_State* L) {
+         { "zeta", &cfg.zeta }, { "gain", &cfg.gain }, { "heightPower", &cfg.heightPower }, { "maxBack", &cfg.maxBack },
+         { "maxForward", &cfg.maxForward }, { "maxSide", &cfg.maxSide }, { "windMix", &cfg.windMix }, { "windMax", &cfg.windMax },
+         { "worldMix", &cfg.worldMix }, { "turnMix", &cfg.turnMix }, { "hz0", &cfg.hz0 }, { "hzStep", &cfg.hzStep }, { "hzMin", &cfg.hzMin },
+-        { "minDrop", &cfg.minDrop },
++        { "minDrop", &cfg.minDrop }, { "maxForwardFront", &cfg.maxForwardFront }, { "frontMargin", &cfg.frontMargin },
+     };
+     if (!strcmp(name, "enabled")) {
+         cfg.enabled = value != 0.0f;
+diff --git a/v2/orig/HairPhysics.h b/v2/new/HairPhysics.h
+index 08f1bb6..dd1071d 100644
+--- a/v2/orig/HairPhysics.h
++++ b/v2/new/HairPhysics.h
+@@ -35,15 +35,20 @@ constexpr uint32_t ProcedurallyDriven = 0x80;
+ struct Settings {
+     bool enabled = true;
+     // Natural frequency of the first link (Hz); each further link is hzStep slower, never below hzMin.
+-    float hz0 = 4.4f;
+-    float hzStep = 0.25f;
+-    float hzMin = 2.4f;
+-    float zeta = 0.36f;
++    // Owner-tuned in game 2026-11-14 (heavy, slow, almost no ringing: it reads as hair, not as soft tissue).
++    float hz0 = 2.6f;
++    float hzStep = 0.15f;
++    float hzMin = 1.6f;
++    float zeta = 0.85f;
+     float gain = 2.4f;
+     float heightPower = 1.3f;
+     // Limits on the tip's travel in the head's frame (model units). Back is -x.
+     float maxBack = 0.12f;
+     float maxForward = 0.04f;
++    // A chain that hangs in front of the head (a beard, face tendrils) rests against the chest, so it may not swing forward into it.
++    // "In front" = its last pivot is more than frontMargin ahead of the head pivot.
++    float maxForwardFront = 0.004f;
++    float frontMargin = 0.03f;
+     float maxSide = 0.10f;
+     float windMix = 0.02f;
+     float windMax = 0.06f;
+@@ -88,6 +93,7 @@ struct State {
+     uint32_t bone[MaxChains][MaxLinks] = {};
+     float pivot[MaxChains][MaxLinks][3] = {};
+     float tip[MaxChains][MaxLinks][3] = {}; // bind position of the point each link's spring tracks
++    bool front[MaxChains] = {}; // the chain hangs in front of the head
+     JigglePhysics::Spring spring[MaxChains][MaxLinks];
+     double lastTime = 0.0;
+     bool worldPrimed = false;
+@@ -158,6 +164,7 @@ inline void Detect(CM2Model* model, State& s) {
+         }
+         const int c = s.chainCount++;
+         s.linkCount[c] = len;
++        s.front[c] = pivots[chain[len - 1]].x - pivots[head].x > cfg.frontMargin;
+         for (int k = 0; k < len; ++k) {
+             s.bone[c][k] = chain[k];
+             s.pivot[c][k][0] = pivots[chain[k]].x;
+@@ -313,7 +320,7 @@ inline void Update(CM2Model* model, State& s, bool run, const JigglePhysics::Mot
+             d[1] += windY * height;
+             JigglePhysics::ToBoneFrame(head, d, local);
+             const float weight = std::pow(height, cfg.heightPower) * cfg.gain * strength;
+-            local[0] = std::max(-cfg.maxBack, std::min(cfg.maxForward, local[0] * weight));
++            local[0] = std::max(-cfg.maxBack, std::min(s.front[c] ? cfg.maxForwardFront : cfg.maxForward, local[0] * weight));
+             local[1] = JigglePhysics::Clamp(local[1] * weight, cfg.maxSide);
+             local[2] = 0.0f; // a rigid link only swings
+ 
